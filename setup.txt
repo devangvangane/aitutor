@@ -1,0 +1,230 @@
+# Environment Files and Setup Instructions
+
+## Backend Environment Variables (.env)
+
+Create a `.env` file in the Django project root:
+
+```env
+# Django Settings
+SECRET_KEY=your-django-secret-key-here
+DEBUG=True
+
+# Clerk Configuration
+CLERK_SECRET_KEY=sk_test_your_clerk_secret_key_here
+CLERK_PUBLISHABLE_KEY=pk_test_your_clerk_publishable_key_here
+
+# AI Model API (Replace with your actual AI model API)
+AI_MODEL_API_URL=https://api.openai.com/v1/completions
+AI_MODEL_API_KEY=your-ai-model-api-key-here
+
+# Database (Optional - uses SQLite by default)
+DATABASE_URL=sqlite:///db.sqlite3
+```
+
+## Frontend Environment Variables (.env.local)
+
+Create a `.env.local` file in the React project root:
+
+```env
+REACT_APP_CLERK_PUBLISHABLE_KEY=pk_test_your_clerk_publishable_key_here
+```
+
+## Django Project Structure
+
+```
+ai_tutor_backend/
+├── ai_tutor_backend/
+│   ├── __init__.py
+│   ├── settings.py
+│   ├── urls.py
+│   ├── wsgi.py
+│   └── asgi.py
+├── accounts/
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── views.py
+│   ├── urls.py
+│   └── migrations/
+├── subjects/
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── views.py
+│   ├── urls.py
+│   ├── migrations/
+│   └── management/
+│       └── commands/
+│           └── populate_subjects.py
+├── chatbot/
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── models.py
+│   ├── views.py
+│   ├── urls.py
+│   └── migrations/
+├── manage.py
+├── requirements.txt
+└── .env
+```
+
+## React Project Structure
+
+```
+ai-tutor-frontend/
+├── public/
+│   └── index.html
+├── src/
+│   ├── components/
+│   │   ├── Chatbot.js
+│   │   ├── ChapterList.js
+│   │   ├── LoadingSpinner.js
+│   │   ├── Navbar.js
+│   │   └── ProtectedRoute.js
+│   ├── contexts/
+│   │   └── AuthContext.js
+│   ├── pages/
+│   │   ├── Dashboard.js
+│   │   ├── Home.js
+│   │   ├── Login.js
+│   │   └── StandardSelection.js
+│   ├── App.css
+│   ├── App.js
+│   ├── index.css
+│   └── index.js
+├── package.json
+└── .env.local
+```
+
+## Setup Instructions
+
+### Backend Setup
+
+1. **Create Virtual Environment:**
+   ```bash
+   python -m venv ai_tutor_backend
+   cd ai_tutor_backend
+   source bin/activate  # On Windows: Scripts\activate
+   ```
+
+2. **Install Dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Create Django Apps:**
+   ```bash
+   python manage.py startapp accounts
+   python manage.py startapp subjects
+   python manage.py startapp chatbot
+   ```
+
+4. **Run Migrations:**
+   ```bash
+   python manage.py makemigrations
+   python manage.py migrate
+   ```
+
+5. **Create Superuser:**
+   ```bash
+   python manage.py createsuperuser
+   ```
+
+6. **Populate Initial Data:**
+   ```bash
+   python manage.py populate_subjects
+   ```
+
+7. **Run Development Server:**
+   ```bash
+   python manage.py runserver
+   ```
+
+### Frontend Setup
+
+1. **Create React App:**
+   ```bash
+   npx create-react-app ai-tutor-frontend
+   cd ai-tutor-frontend
+   ```
+
+2. **Install Dependencies:**
+   ```bash
+   npm install @clerk/clerk-react axios react-router-dom lucide-react
+   ```
+
+3. **Start Development Server:**
+   ```bash
+   npm start
+   ```
+
+### Clerk Setup
+
+1. **Sign up for Clerk:**
+   - Go to [clerk.dev](https://clerk.dev)
+   - Create a new application
+   - Get your publishable key and secret key
+
+2. **Configure Clerk:**
+   - Add the keys to your environment files
+   - Configure allowed redirect URLs in Clerk dashboard
+
+### AI Model Integration
+
+The current implementation includes a placeholder for AI model integration. You can integrate with:
+- OpenAI GPT API
+- Google's Gemini API
+- Anthropic's Claude API
+- Custom hosted models
+
+Replace the `call_ai_model` function in `chatbot/views.py` with your actual AI model integration.
+
+## Features Implemented
+
+### Backend Features:
+- ✅ Student registration/login with Clerk
+- ✅ Standard selection (one-time)
+- ✅ Subject and chapter management
+- ✅ Chat session management
+- ✅ AI model integration (placeholder)
+- ✅ Message history storage
+- ✅ REST API endpoints
+
+### Frontend Features:
+- ✅ Clerk authentication
+- ✅ Standard selection page
+- ✅ Dashboard with subject navigation
+- ✅ AI chatbot interface
+- ✅ Chapter list sidebar
+- ✅ Responsive design
+- ✅ Real-time chat functionality
+
+## API Endpoints
+
+### Accounts
+- `POST /api/accounts/auth/` - Login/Register
+- `POST /api/accounts/select-standard/` - Select standard
+- `GET /api/accounts/profile/{student_id}/` - Get profile
+
+### Subjects
+- `GET /api/subjects/` - Get all subjects
+- `GET /api/subjects/{subject_name}/chapters/{student_id}/` - Get chapters
+- `GET /api/subjects/chapters/{chapter_id}/` - Get chapter details
+
+### Chatbot
+- `POST /api/chatbot/start-session/` - Start chat session
+- `POST /api/chatbot/send-message/` - Send message
+- `GET /api/chatbot/sessions/{student_id}/` - Get chat sessions
+- `GET /api/chatbot/messages/{session_id}/` - Get chat messages
+
+## Next Steps
+
+1. **Integrate Real AI Model:** Replace the placeholder AI function with actual model integration
+2. **Add More Subjects/Chapters:** Extend the populate_subjects command for more content
+3. **Implement File Upload:** Allow students to upload homework/images for AI assistance
+4. **Add Progress Tracking:** Implement student progress and analytics
+5. **Mobile App:** Create React Native version for mobile devices
+6. **Production Deployment:** Set up production environment with proper database and hosting
